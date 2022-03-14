@@ -13,15 +13,25 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <stdio.h>
+
 #include "test_mock_malloc_simple.h"
 
 static void	*handler(size_t size, void *(*real_malloc)(size_t size))
 {
-	return (NULL);
+	static bool	skip = false;
+
+	if (skip)
+		return (real_malloc(size));
+	skip = true;
+	printf("malloc(%zu) called\n", size);
+	skip = false;
+	return (real_malloc(size));
 }
 
 int	main(void)
 {
 	ft_test_mock_malloc_simple_set_handler(handler);
-	return (malloc(1024) != NULL);
+	malloc(1024);
+	return (0);
 }
