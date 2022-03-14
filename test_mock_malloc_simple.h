@@ -16,10 +16,7 @@
 # include <stddef.h>
 # include <stdbool.h>
 
-void	ft_test_mock_malloc_simple__set_before(
-			bool (*handler)(size_t size));
-
-void	ft_test_mock_malloc_simple__set_after(
-			void (*handler)(size_t size, bool ok, void *address));
+void	ft_test_mock_malloc_simple_set_handler(
+			void *(*handler)(size_t size, void *(*real_malloc)(size_t size)));
 
 #endif

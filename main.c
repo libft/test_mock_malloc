@@ -17,38 +17,25 @@
 
 #include "test_mock_malloc_simple.h"
 
-static bool	(*g_before)(size_t size);
-static void	(*g_after)(size_t size, bool ok, void *address);
+static void	*(*g_handler)(size_t size, void *(*real_malloc)(size_t size));
 
-void	ft_test_mock_malloc_simple__set_before(
-			bool (*handler)(size_t size))
+void	ft_test_mock_malloc_simple_set_handler(
+			void *(*handler)(size_t size, void *(*real_malloc)(size_t size)))
 {
-	g_before = handler;
-}
-
-void	ft_test_mock_malloc_simple__set_after(
-			void (*handler)(size_t size, bool ok, void *address))
-{
-	g_after = handler;
+	g_handler = handler;
 }
 
 void	*malloc(size_t size)
 {
 	static void	*(*real_malloc)(size_t size) = NULL;
-	bool		ok;
-	void		*result;
 
 	if (real_malloc == NULL)
 	{
 		real_malloc = (void *(*)(size_t size))
 			dlsym((void *)((intptr_t)(-1)), "malloc");
 	}
-	ok = (!g_before || g_before(size));
-	if (ok)
-		result = NULL;
+	if (g_handler)
+		return (g_handler(size, real_malloc));
 	else
-		result = NULL;
-	if (g_after)
-		g_after(size, ok, result);
-	return (result);
+		return (real_malloc(size));
 }

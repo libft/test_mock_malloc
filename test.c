@@ -12,16 +12,17 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "test_mock_malloc_simple.h"
 
-static bool	always_return_false(size_t size)
+static void	*handler(size_t size, void *(*real_malloc)(size_t size))
 {
-	return (false);
+	return (NULL);
 }
 
 int	main(void)
 {
-	ft_test_mock_malloc_simple__set_before(always_return_false);
+	ft_test_mock_malloc_simple_set_handler(handler);
 	return (malloc(1024) != NULL);
 }
